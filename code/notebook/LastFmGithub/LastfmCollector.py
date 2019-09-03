@@ -923,65 +923,37 @@ class LastfmCollector(object):
         :param username: lastfm usename
         """
 
-        page = 1
         user_info_file_path = "data/users_info/" + username + "_info.json"
 
         tmp_friends = {}
 
-        # try to retrieve the user's info(if user's info file exist it means that the user exist in our database)
-        try:
-            user_info = json.load(open(user_info_file_path, encoding='utf-8'))
-            # I've checked file's existance and now I can close it because I don't need it right now
-            user_info.close()
+        max_num_attempts_read_url = 3
+        data = self.fetch_HTTP_response(url, max_num_attempts_read_url)
 
-            while True:
+        if data != {} and data is not None:
 
-                url = "http://ws.audioscrobbler.com/2.0/?method=user.getfriends&user=%s&api_key=%s&page=%d&limit=100" \
-                      "&format=json" % \
-                      (username, self.lfm_apikey, page)
+            if len(data) == 0:
+                return
 
-                max_num_attempts_read_url = 3
-                data = self.fetch_HTTP_response(url, max_num_attempts_read_url)
+            for k in tqdm.tqdm(data['friends']['user'], ncols=100, ascii=True,
+                               desc=username + " crawling friends "):
 
-                if data != {} and data is not None:
+                details = {'country': None, 'registered_on': None}
+                try:
+                    details['country'] = k['country']
+                    details['registered_on'] = k['registered']['unixtime']
 
-                    if len(data) == 0:
-                        break
-
-                    # check next page in the next while's iteration
-                    page += 1
-
-                    for k in tqdm.tqdm(data['friends']['user'], ncols=100, ascii=True,
-                                       desc=username + " crawling friends at page " + page):
-
-                        details = {'gender': None, 'age': None, 'country': None, 'playcount': None,
-                                   'registered_on': None}
-                        try:
-                            details['user_id'] = k['name']
-                            details['gender'] = k['gender']
-                            age = int(k['age'])
-                            details['age'] = None if age == 0 else age
-                            details['country'] = k['country']
-                            details['playcount'] = k['playcount']
-                            details['registered_on'] = k['registered']['unixtime']
-
-                            tmp_friends[k['name']] = details
-                        except KeyError as e:
-                            print("KeyError " + str(e))
-                            print(url)
-                            print("In get_network")
-                            continue
-                        except Exception as e:
-                            print(e)
-                            print(url)
-                            print("In get_network")
-                            continue
-                else:
-                    break  # exit from the while true loop when HTTP data is empty
-        except FileNotFoundError:
-            # if the FileNotFoundError is raised it means that the user's file doesn't exist
-            # => it should exists => exit
-            return
+                    tmp_friends[k['name']] = details
+                except KeyError as e:
+                    print("KeyError " + str(e))
+                    print(url)
+                    print("In get_network")
+                    continue
+                except Exception as e:
+                    print(e)
+                    print(url)
+                    print("In get_network")
+                    continue
 
         user_info = json.load(open(user_info_file_path, encoding='utf-8'))
         user_info["friends"] = tmp_friends
