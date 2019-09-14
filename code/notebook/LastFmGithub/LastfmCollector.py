@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import time
 import urllib.request
 import urllib.request
@@ -62,7 +64,7 @@ class LastfmCollector(object):
             self.delete_content_of_a_file(file_path)
 
         # get all the files in the "data/users_info" directory and delete their content
-        list_of_files = os.listdir("data/artists_info")
+        list_of_files = os.listdir("data/users_info")
         for file in list_of_files:
             # delete content of the file
             file_path = "data/users_info/" + file
@@ -81,7 +83,7 @@ class LastfmCollector(object):
             self.delete_file(file_path)
 
         # get all the files in the "data/users_info" directory and delete their content
-        list_of_files = os.listdir("data/artists_info")
+        list_of_files = os.listdir("data/users_info")
         for file in list_of_files:
             # delete content of the file
             file_path = "data/users_info/" + file
@@ -97,6 +99,22 @@ class LastfmCollector(object):
             f.close()
 
     def check_if_file_exist(self, path):
+        """
+           Check if a file exist
+           :param path: file's path to check existance
+           :return: 0 if the file already exist
+                    -1 if the file didn't exist
+
+        """
+        try:
+            # check if the user's info file exist
+            open(path).close()
+            return 0
+        except FileNotFoundError:
+            # if the FileNotFoundError is raised it means that the file doesn't exist
+            return -1
+
+    def check_if_file_exist_and_create_it(self, path):
         """
            Check if a file exist and if not craete it
            :param path: file's path to check existance
@@ -123,11 +141,31 @@ class LastfmCollector(object):
 
         with open(file_path, "r", encoding='utf-8') as f:
             lines = f.readlines()
-        with open(file_path, "w", encoding='utf-8') as f:
+        with open(file_path, "a", encoding='utf-8') as f:
             for line in lines:
                 # need to strip("\n") the newline character in the comparison because element doesn't end with a newline
                 if line.strip("\n") != element_to_delete:
                     f.write(line)
+
+    def get_last_line_from_file(self, file_path):
+        """
+            Function which opens the file passed as argument and get its last line.
+            :param file_path: file from which you want to extract last line
+         """
+        with open(file_path, 'r') as f:
+            lines = f.read().splitlines()  # return an array with all the lines of the file
+            if len(lines) == 0:
+                return ""
+            else:
+                last_line = lines[-1]
+                return last_line
+
+    def write_output_to_file(self, file_path, output):
+        """
+           Try write output data to the file passed by argument
+           :param file_path: file in which to write data
+           :param output: data to write to file
+        """
 
     def fetch_HTTP_response(self, url, max_num_attempts_read_url):
         """
@@ -154,6 +192,7 @@ class LastfmCollector(object):
             if max_num_attempts_read_url > 0:
                 self.fetch_HTTP_response(url, max_num_attempts_read_url)
             else:
+                print()
                 print(e)
                 print("Connection refused: " + url)
                 return {}  # failure, return empty json response
@@ -166,6 +205,7 @@ class LastfmCollector(object):
             if max_num_attempts_read_url > 0:
                 self.fetch_HTTP_response(url, max_num_attempts_read_url)
             else:
+                print()
                 print(e)
                 print("Problem caused by url: " + url)
                 return {}  # failure, return empty json response
@@ -178,6 +218,7 @@ class LastfmCollector(object):
             if max_num_attempts_read_url > 0:
                 self.fetch_HTTP_response(url, max_num_attempts_read_url)
             else:
+                print()
                 print(e)
                 print("Problem caused by url: " + url)
                 return {}  # failure, return empty json response
@@ -212,30 +253,32 @@ class LastfmCollector(object):
                     }
 
                     # check if file exist, otherwise create it
-                    result = self.check_if_file_exist(user_info_file_path)
+                    result = self.check_if_file_exist_and_create_it(user_info_file_path)
 
-                    if result == 1:  # file didn't exist and I've just create it
+                    if result == 1:  # file didn't exist
                         # write user's info to file
-                        # if the file doesn't exist, create it and if it already exist, overwrite it
                         with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
                             json.dump(user_info, outfile, indent=4)
                             outfile.close()
+                            return 0  # user's info file correctly created
+                    elif result == 0:  # result == 0: file already exist and user's info already there
+                        return 0
                 except KeyError as e:
+                    print()
                     print("KeyError " + str(e))
                     print(url)
-                    print("In get_artist_info: " + "username= " + username)
+                    print("In get_user_info: " + "username= " + username)
                     # delete user's file, because it is empty
                     self.delete_file(user_info_file_path)
-                    return
+                    return -1
                 except Exception as e:
+                    print()
                     print(e)
                     print(url)
-                    print("In get_artist_info: " + "username= " + username)
+                    print("In get_user_info: " + "username= " + username)
                     # delete user's file, because it is empty
                     self.delete_file(user_info_file_path)
-                    return
-
-                # result == 0: file already exist and user's info are already there
+                    return -1
             else:
                 #  user's file hasn't been created
                 # TO DO : remove user from user file
@@ -254,6 +297,9 @@ class LastfmCollector(object):
             :param artist: name (some artist don't have an musicbrainz id)
             :param artist_mbid: artist musicbrainz id
         """
+        # check if artist is present or is "<Unknown>" (don't collect data in this case)
+        if artist == "<Unknown>":
+            return
 
         # remove the "feat" artists from the artist's name, if present
         delim = "feat"
@@ -275,10 +321,9 @@ class LastfmCollector(object):
         artist_info_file_path = "data/artists_info/" + tmp_artist_name_file + "_info.json"
 
         # check if file exist, otherwise create it
-        result = self.check_if_file_exist(artist_info_file_path)
+        result = self.check_if_file_exist_and_create_it(artist_info_file_path)
 
         if result == 1:  # file didn't exist and I've just create it
-
             # ask artist's info to the API
             query = "&artist=%s" % (
                 urllib.parse.quote_plus(art))  # convert whitespace in + and utf-8 '\x..' char in '%'
@@ -310,9 +355,9 @@ class LastfmCollector(object):
                             outfile.close()
 
                     except KeyError as e:
-                        print("KeyError " + str(e))
-                        print(url)
-                        print("In get_artist_info: " + "artist= " + art)
+                        # print("KeyError " + str(e))
+                        # print(url)
+                        # print("In get_artist_info: " + "artist= " + art)
                         # delete file, because it is empty
                         self.delete_file(artist_info_file_path)
                         return
@@ -331,8 +376,8 @@ class LastfmCollector(object):
                 # delete file, because it is empty
                 self.delete_file(artist_info_file_path)
                 return
-
-        # result == 0: file already exist and artist's info are already there
+        elif result == 0:  # result == 0: file already exist and artist's info are already there
+            return
 
     def get_album_info(self, album, album_mbid, artist, artist_mbid):
         """
@@ -342,6 +387,9 @@ class LastfmCollector(object):
             :param artist: artist who recorded the album
             :param artist_mbid: artist's mbid
         """
+        # check if artist is present or is "<Unknown>" (don't collect data in this case)
+        if artist == "<Unknown>":
+            return
 
         # check if file exist, otherwise create it and add to it artist's info
         self.get_artist_info(artist, artist_mbid)
@@ -364,6 +412,10 @@ class LastfmCollector(object):
             tmp_artist_name_file = tmp_artist_name_file.replace(c, '_')
 
         artist_info_file_path = "data/artists_info/" + tmp_artist_name_file + "_info.json"
+
+        # check artist's file existance
+        if self.check_if_file_exist(artist_info_file_path) == -1:  # file doesn't exist
+            return
 
         artist_info = json.load(open(artist_info_file_path, encoding='utf-8'))
 
@@ -422,20 +474,20 @@ class LastfmCollector(object):
                             json.dump(artist_info, outfile, indent=4)
                             outfile.close()
                     except KeyError as e:
-                        print("KeyError " + str(e))
-                        print(url)
-                        print("In get_album_info: " + "artist= " + art + "album= " + album)
+                        # print("KeyError " + str(e))
+                        # print(url)
+                        # print("In get_album_info: " + "artist= " + art + "album= " + album)
                         return  # not add album to the user's file
                     except Exception as e:
-                        print(e)
-                        print(url)
-                        print("In get_album_info: " + "artist= " + art + "album= " + album)
+                        # print(e)
+                        # print(url)
+                        # print("In get_album_info: " + "artist= " + art + "album= " + album)
                         return  # not add album to the user's file
             else:
                 return  # not add album to the user's file
         except Exception as e:
-            print(e)
-            print("ARTIST: " + artist + "  ALBUM: " + album)
+            # print(e)
+            return
 
     def get_user_available_charts(self, username, charts_type, start_date, end_date):
         """
@@ -485,7 +537,7 @@ class LastfmCollector(object):
                 # insert in the "crawled_weeks" list, the weeks already examined (present in the user'info file)
                 crawled_weeks = {(value["from"], value["to"]): None for key, value in user_info["crawled"].items()}
             except KeyError:
-                # ifthe KeyError is raised it means that the user file don't have the "crawled" key
+                # if the KeyError is raised it means that the user file don't have the "crawled" key
                 # => no crawled_weeks
                 crawled_weeks = []
 
@@ -502,12 +554,14 @@ class LastfmCollector(object):
                         # insert in the "selected_weeks" list, the weeks that have to be examined
                         selected_weeks.append((fr, to))
                 except KeyError as e:
+                    print()
                     print("KeyError " + str(e))
                     print(url)
                     print("In get_user_available_charts: " + "fr= " + str(start_date) + "to= " + str(end_date))
                     # skip iteration
                     continue
                 except Exception as e:
+                    print()
                     print(e)
                     print(url)
                     print("In get_user_available_charts: " + "fr= " + str(start_date) + "to= " + str(end_date))
@@ -532,18 +586,20 @@ class LastfmCollector(object):
             for week in tqdm.tqdm(selected_weeks, ncols=100, ascii=True, desc=username + " crawling weeks"):
                 tmp_charts[week[0]] = {"from": week[0], "to": week[1]}
 
-            if len(selected_weeks) > 0:
+            user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+            user_info["crawled"] = tmp_charts
 
-                user_info = json.load(open(user_info_file_path, encoding='utf-8'))
-                user_info["crawled"] = tmp_charts
-
+            try:
                 # write uptaded crawled listened tracks
                 with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
                     json.dump(user_info, outfile, indent=4)
                     outfile.close()
+            except IOError:
+                self.delete_file(user_info_file_path)
+                return -1
 
+            if len(selected_weeks) > 0:
                 # get tracks, artists or/and albums listened during the selected week
-
                 for week in tqdm.tqdm(selected_weeks, ncols=100, ascii=True,
                                       desc=username + " crawling tracks/artists/albums"):
                     if "track" in charts_type:
@@ -638,12 +694,14 @@ class LastfmCollector(object):
                             # Dictionary_Name[New_Key_Name] = New_Key_Value
                             tmp_listened_tracks[track_name] = record
                     except KeyError as e:
+                        print()
                         print("KeyError " + str(e))
                         print(url)
                         print("In get_user_weekly_track_chart: " + "fr= " + str(fr) + "to= " + str(to))
                         # skip iteration
                         continue
                     except Exception as e:
+                        print()
                         print(e)
                         print(url)
                         print("In get_user_weekly_track_chart: " + "fr= " + str(fr) + "to= " + str(to))
@@ -729,12 +787,14 @@ class LastfmCollector(object):
                             # Dictionary_Name[New_Key_Name] = New_Key_Value
                             tmp_listened_artists[artist_name] = record
                     except KeyError as e:
+                        print()
                         print("KeyError " + str(e))
                         print(url)
                         print("In get_user_weekly_artist_chart: " + "fr= " + str(fr) + "to= " + str(to))
                         # skip iteration
                         continue
                     except Exception as e:
+                        print()
                         print(e)
                         print(url)
                         print("In get_user_weekly_artist_chart: " + "fr= " + str(fr) + "to= " + str(to))
@@ -813,20 +873,24 @@ class LastfmCollector(object):
                              REMEBER TO CHECK THIS COLLISION WHEN YOU RETRIEVE DATA FROM THE USER'S FILE !
                         """
                         try:
-                            tmp_listened_albums[album_name] = [tmp_listened_albums[album_name]]
-                            tmp_listened_albums[album_name].append(record)
+                            if isinstance(tmp_listened_albums[album_name], list):
+                                tmp_listened_albums[album_name].append(record)
+                            else:
+                                tmp_listened_albums[album_name] = [tmp_listened_albums[album_name]]
                         except KeyError:
                             # if the KeyError is raise it means that there isn't the key => I can my new key
                             # without problems. Add a (key:value) pair to dictionary:
                             # Dictionary_Name[New_Key_Name] = New_Key_Value
                             tmp_listened_albums[album_name] = record
                     except KeyError as e:
+                        print()
                         print("KeyError " + str(e))
                         print(url)
                         print("In get_user_weekly_album_chart: " + "fr= " + str(fr) + "to= " + str(to))
                         # skip iteration
                         continue
                     except Exception as e:
+                        print()
                         print(e)
                         print(url)
                         print("In get_user_weekly_album_chart: " + "fr= " + str(fr) + "to= " + str(to))
@@ -849,34 +913,41 @@ class LastfmCollector(object):
         user_info_file_path = "data/users_info/" + username + "_info.json"
 
         # verify existance of user's file info
-        try:
+        res = self.check_if_file_exist(user_info_file_path)
+        if res == -1:
+            return
+        else:
             user_info = json.load(open(user_info_file_path, encoding='utf-8'))
 
-            # iterate over the crawled weeks
-            for key, crawled_week in tqdm.tqdm(user_info["crawled"].items(), ncols=100, ascii=True,
-                                               desc=username + " collect artists' info"):
-                # iterate over the tracks of a given crawled week
+        # iterate over the crawled weeks
+        for key, crawled_week in tqdm.tqdm(user_info["crawled"].items(), ncols=100, ascii=True,
+                                           desc=username + " collect artists' info"):
+
+            try:
+                # iterate over the tracks of a given crawled week to extract artists
                 for kkey, tracks_chart in crawled_week["listened tracks"].items():
                     if isinstance(tracks_chart, list):
-                        # iterate on the collided artists
-                        for art in tracks_chart:
-                            artist_name = art['artist']
-                            artist_mbid = art['artist_mbid']
+                        # iterate on the colliding artists
+                        for index in range(len(tracks_chart)):
+                            artist_name = tracks_chart[int(index)]["artist"]
+                            artist_mbid = tracks_chart[int(index)]["artist_mbid"]
+                            # get artist's info
                             self.get_artist_info(artist_name, artist_mbid)
-
                     else:
                         artist_name = tracks_chart['artist']
                         artist_mbid = tracks_chart['artist_mbid']
+                        # get artist's info
                         self.get_artist_info(artist_name, artist_mbid)
-
-        except FileNotFoundError:
-            return
-        except KeyError as e:
-            print("KeyError " + str(e))
-            print("In collect_artist_info_from_weekly_charts")
-        except Exception as e:
-            print(e)
-            print("In collect_artist_info_from_weekly_charts")
+            except KeyError as e:
+                print()
+                print("KeyError " + str(e))
+                print("In collect_artist_info_from_weekly_charts")
+                continue
+            except Exception as e:
+                print()
+                print(e)
+                print("In collect_artist_info_from_weekly_charts")
+                continue
 
     def collect_album_info_from_weekly_charts(self, username):
         """
@@ -886,36 +957,44 @@ class LastfmCollector(object):
         user_info_file_path = "data/users_info/" + username + "_info.json"
 
         # verify existance of user's file info
-        try:
+        res = self.check_if_file_exist(user_info_file_path)
+        if res == -1:
+            return
+        else:
             user_info = json.load(open(user_info_file_path, encoding='utf-8'))
 
-            # iterate over the crawled weeks
-            for key, crawled_week in tqdm.tqdm(user_info["crawled"].items(), ncols=100, ascii=True,
-                                               desc=username + " collect artists' info"):
-                # iterate over the tracks of a given crawled week
+        # iterate over the crawled weeks
+        for key, crawled_week in tqdm.tqdm(user_info["crawled"].items(), ncols=100, ascii=True,
+                                           desc=username + " collect albums' info"):
+            try:
+                # iterate over the albums of a given crawled week to extract albums
                 for kkey, albums_chart in crawled_week["listened albums"].items():
                     if isinstance(albums_chart, list):
-                        # iterate on the collided artists
-                        for alb in albums_chart:
-                            album_name = alb['album']
-                            album_mbid = alb['album_mbid']
-                            artist_name = alb['artist']
-                            artist_mbid = alb['artist_mbid']
+                        # iterate on the colliding albums
+                        for index in range(len(albums_chart)):
+                            album_name = albums_chart[int(index)]["album"]
+                            album_mbid = albums_chart[int(index)]["album_mbid"]
+                            artist_name = albums_chart[int(index)]["artist"]
+                            artist_mbid = albums_chart[int(index)]["artist_mbid"]
+                            # get album's info
                             self.get_album_info(album_name, album_mbid, artist_name, artist_mbid)
                     else:
                         album_name = albums_chart['album']
                         album_mbid = albums_chart['album_mbid']
                         artist_name = albums_chart['artist']
                         artist_mbid = albums_chart['artist_mbid']
+                        # get album's info
                         self.get_album_info(album_name, album_mbid, artist_name, artist_mbid)
-        except FileNotFoundError:
-            return
-        except KeyError as e:
-            print("KeyError " + str(e))
-            print("In collect_album_info_from_weekly_charts")
-        except Exception as e:
-            print(e)
-            print("In collect_album_info_from_weekly_charts")
+            except KeyError as e:
+                print()
+                print("KeyError " + str(e))
+                print("In collect_album_info_from_weekly_charts")
+                continue
+            except Exception as e:
+                print()
+                print(e)
+                print("In collect_album_info_from_weekly_charts")
+                continue
 
     def get_network(self, username):
         """
@@ -927,38 +1006,47 @@ class LastfmCollector(object):
 
         tmp_friends = {}
 
+        url = "http://ws.audioscrobbler.com/2.0/?method=user.getfriends&user=%s&api_key=%s&limit=500" \
+              "&format=json" % \
+              (username, self.lfm_apikey)
+
         max_num_attempts_read_url = 3
         data = self.fetch_HTTP_response(url, max_num_attempts_read_url)
 
         if data != {} and data is not None:
 
-            if len(data) == 0:
-                return
+            if len(data) > 0:
+                for k in tqdm.tqdm(data['friends']['user'], ncols=100, ascii=True,
+                                   desc=username + " crawling friends "):
 
-            for k in tqdm.tqdm(data['friends']['user'], ncols=100, ascii=True,
-                               desc=username + " crawling friends "):
+                    details = {'country': None, 'registered_on': None}
+                    try:
+                        details['country'] = k['country']
+                        details['registered_on'] = k['registered']['unixtime']
 
-                details = {'country': None, 'registered_on': None}
-                try:
-                    details['country'] = k['country']
-                    details['registered_on'] = k['registered']['unixtime']
-
-                    tmp_friends[k['name']] = details
-                except KeyError as e:
-                    print("KeyError " + str(e))
-                    print(url)
-                    print("In get_network")
-                    continue
-                except Exception as e:
-                    print(e)
-                    print(url)
-                    print("In get_network")
-                    continue
+                        tmp_friends[k['name']] = details
+                    except KeyError as e:
+                        print()
+                        print("KeyError " + str(e))
+                        print(url)
+                        print("In get_network")
+                        continue
+                    except Exception as e:
+                        print()
+                        print(e)
+                        print(url)
+                        print("In get_network")
+                        continue
 
         user_info = json.load(open(user_info_file_path, encoding='utf-8'))
         user_info["friends"] = tmp_friends
 
-        # write user's friends
-        with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
-            json.dump(user_info, outfile, indent=4)
-            outfile.close()
+        try:
+            # write user's friends
+            with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
+                json.dump(user_info, outfile, indent=4)
+                outfile.close()
+            return 0
+        except IOError:
+            self.delete_file(user_info_file_path)
+            return -1
