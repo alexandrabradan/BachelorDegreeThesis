@@ -16,6 +16,7 @@ def check_if_file_is_corrupted(last_user_crawled):
     try:
          with gzip.open(last_username_file_path, 'rt', encoding='utf-8') as infile:
             user_info = json.load(infile)
+            infile.close()
 
         check1 = user_info["crawled"]
         check2 = user_info["friends"]
