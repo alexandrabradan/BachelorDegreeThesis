@@ -37,7 +37,7 @@ def get_index_to_start_crawling(user_names, users_log_file_path):
         print("log file was empty")
 
         # delete first user's file, if created
-        first_user_file_path = "data/users_info/" + user_names[0] + "_info.json"
+        first_user_file_path = "data/users_info/" + user_names[0] + "_info.json.gz"
         dg.delete_file(first_user_file_path)
         state_variable = user_names[0]
         print("DELETE " + first_user_file_path)
@@ -62,7 +62,7 @@ def get_index_to_start_crawling(user_names, users_log_file_path):
             # check if there is another user after the "last_user_crawled" in the array
             if next_index <= (len(user_names)-1):
                 # delete next username's info file (it's corrupted, otherwise the username would be in the log file)
-                next_username_file_path = "data/users_info/" + user_names[next_index] + "_info.json"
+                next_username_file_path = "data/users_info/" + user_names[next_index] + "_info.json.gz"
                 dg.delete_file(next_username_file_path)
                 state_variable = user_names[next_index]
                 print("DELETE " + next_username_file_path)
@@ -96,13 +96,13 @@ def process_user(start_index, users, lfc, charts_type=("artist", "album", "track
                     users_log_file.close()
 
                     if user == state_variable:
-                        user_info_file_path = next_username_file_path = "data/users_info/" + user + "_info.json"
+                        user_info_file_path = next_username_file_path = "data/users_info/" + user + "_info.json.gz"
                         print("RECREATE " + user_info_file_path)
 
 
 def get_additional_infos(users, lfc):
     for u in users:
-        user_file = "data/users_info/" + u + "_info.json"
+        user_file = "data/users_info/" + u + "_info.json.gz"
 
         # check if user's file exist (if not it means it wasn't create in the crawling phase)
         if lfc.check_if_file_exist(user_file) == 0:
