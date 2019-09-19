@@ -12,7 +12,7 @@ state_variable = ""  # state variable to memorize deleted user after restart of 
 
 
 def check_if_file_is_corrupted(last_user_crawled):
-    last_username_file_path = "data/users_info/" + last_user_crawled + "_info.json"
+    last_username_file_path = "data/users_info/" + last_user_crawled + "_info.json.gz"
     try:
          with gzip.open(last_username_file_path, 'rt', encoding='utf-8') as infile:
             user_info = json.load(infile)
