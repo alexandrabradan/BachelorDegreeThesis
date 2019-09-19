@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import time
 import urllib.request
 import urllib.request
@@ -9,6 +7,7 @@ import json
 import tqdm
 import os
 import requests
+import gzip
 
 __author__ = 'Giulio Rossetti', 'Alexandra Bradan'
 __license__ = "GPL"
@@ -229,7 +228,7 @@ class LastfmCollector(object):
             :param username: lastfm username
         """
 
-        user_info_file_path = "data/users_info/" + username + "_info.json"
+        user_info_file_path = "data/users_info/" + username + "_info.json.gz"
 
         # ask user's info to the API
         url = "http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=%s&api_key=%s&format=json" % \
@@ -257,7 +256,7 @@ class LastfmCollector(object):
 
                     if result == 1:  # file didn't exist
                         # write user's info to file
-                        with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
+                        with gzip.open(user_info_file_path, 'wt', encoding='utf-8') as outfile:
                             json.dump(user_info, outfile, indent=4)
                             outfile.close()
                             return 0  # user's info file correctly created
@@ -318,7 +317,7 @@ class LastfmCollector(object):
             # if the special character "c" is present in the file's name replace it with an underscore
             tmp_artist_name_file = tmp_artist_name_file.replace(c, '_')
 
-        artist_info_file_path = "data/artists_info/" + tmp_artist_name_file + "_info.json"
+        artist_info_file_path = "data/artists_info/" + tmp_artist_name_file + "_info.json.gz"
 
         # check if file exist, otherwise create it
         result = self.check_if_file_exist_and_create_it(artist_info_file_path)
@@ -350,7 +349,7 @@ class LastfmCollector(object):
 
                         # write user's info to file
                         # if the file doesn't exist, create it and if it already exist, overwrite it
-                        with open(artist_info_file_path, 'w', encoding='utf-8') as outfile:
+                        with gzip.open(artist_info_file_path, 'wt', encoding='utf-8') as outfile:
                             json.dump(artist_profile, outfile, indent=4)
                             outfile.close()
 
@@ -411,13 +410,15 @@ class LastfmCollector(object):
             # if the special character "c" is present in the file's name replace it with an underscore
             tmp_artist_name_file = tmp_artist_name_file.replace(c, '_')
 
-        artist_info_file_path = "data/artists_info/" + tmp_artist_name_file + "_info.json"
+        artist_info_file_path = "data/artists_info/" + tmp_artist_name_file + "_info.json.gz"
 
         # check artist's file existance
         if self.check_if_file_exist(artist_info_file_path) == -1:  # file doesn't exist
             return
 
-        artist_info = json.load(open(artist_info_file_path, encoding='utf-8'))
+        with gzip.open(artist_info_file_path, 'rt', encoding='utf-8') as infile:
+            artist_info = json.load(infile)
+            infile.close()
 
         try:
             value = artist_info["crawled albums"][album]
@@ -470,7 +471,7 @@ class LastfmCollector(object):
                         artist_info["crawled albums"][album] = album_profile
 
                         # write album's info in the artist's info file
-                        with open(artist_info_file_path, 'w', encoding='utf-8') as outfile:
+                        with gzip.open(artist_info_file_path, 'wt', encoding='utf-8') as outfile:
                             json.dump(artist_info, outfile, indent=4)
                             outfile.close()
                     except KeyError as e:
@@ -505,7 +506,7 @@ class LastfmCollector(object):
         max_num_attempts_read_url = 3
         data = self.fetch_HTTP_response(url, max_num_attempts_read_url)
 
-        user_info_file_path = "data/users_info/" + username + "_info.json"
+        user_info_file_path = "data/users_info/" + username + "_info.json.gz"
 
         if data != {} and data is not None:
 
@@ -518,7 +519,9 @@ class LastfmCollector(object):
             # try to retrieve the user's info(if user's info file exist it means that the user has already info in it)
             try:
                 # read jason file and decode it in order to translate the json object in a dict
-                user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+                with gzip.open(user_info_file_path, 'rt', encoding='utf-8') as infile:
+                    user_info = json.load(infile)
+                    infile.close()
             except FileNotFoundError:
                 # if the FileNotFoundError is raised it means that the file doesn't exist =>
                 # create the user's info file and add info to it
@@ -528,7 +531,9 @@ class LastfmCollector(object):
                     return -1  # exit
                 else:
                     # read jason file and decode it in order to translate the json object in a dict
-                    user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+                    with gzip.open(user_info_file_path, 'rt', encoding='utf-8') as infile:
+                        user_info = json.load(infile)
+                        infile.close()
 
             # keep track of already crawled weeks
             try:
@@ -586,12 +591,11 @@ class LastfmCollector(object):
             for week in tqdm.tqdm(selected_weeks, ncols=100, ascii=True, desc=username + " crawling weeks"):
                 tmp_charts[week[0]] = {"from": week[0], "to": week[1]}
 
-            user_info = json.load(open(user_info_file_path, encoding='utf-8'))
             user_info["crawled"] = tmp_charts
 
             try:
                 # write uptaded crawled listened tracks
-                with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
+                with gzip.open(user_info_file_path, 'wt', encoding='utf-8') as outfile:
                     json.dump(user_info, outfile, indent=4)
                     outfile.close()
             except IOError:
@@ -629,7 +633,7 @@ class LastfmCollector(object):
         :param to: crawled week end date
         """
 
-        user_info_file_path = "data/users_info/" + username + "_info.json"
+        user_info_file_path = "data/users_info/" + username + "_info.json.gz"
 
         # ask which tracks the user has listened during the crawled week passed by argument to the API
         url = "http://ws.audioscrobbler.com/2.0/?method=user.getweeklytrackchart&user=%s&api_key=%s&from=%s&to=%s" \
@@ -708,11 +712,13 @@ class LastfmCollector(object):
                         # skip iteration
                         continue
 
-        user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+        with gzip.open(user_info_file_path, 'rt', encoding='utf-8') as infile:
+            user_info = json.load(infile)
+            infile.close()
         user_info["crawled"][str(fr)]["listened tracks"] = tmp_listened_tracks
 
         # write uptaded crawled listened tracks
-        with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
+        with gzip.open(user_info_file_path, 'wt', encoding='utf-8') as outfile:
             json.dump(user_info, outfile, indent=4)
             outfile.close()
 
@@ -724,7 +730,7 @@ class LastfmCollector(object):
            :param to: end date
         """
 
-        user_info_file_path = "data/users_info/" + username + "_info.json"
+        user_info_file_path = "data/users_info/" + username + "_info.json.gz"
 
         # ask which artists the user has listened during the crawled week passed by argument to the API
         url = "http://ws.audioscrobbler.com/2.0/?method=user.getweeklyartistchart&user=%s&api_key=%s&from=%s&to=%s" \
@@ -801,11 +807,14 @@ class LastfmCollector(object):
                         # skip iteration
                         continue
 
-        user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+        with gzip.open(user_info_file_path, 'rt', encoding='utf-8') as infile:
+            user_info = json.load(infile)
+            infile.close()
+
         user_info["crawled"][str(fr)]["listened artists"] = tmp_listened_artists
 
         # write uptaded crawled listened artists
-        with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
+        with gzip.open(user_info_file_path, 'wt', encoding='utf-8') as outfile:
             json.dump(user_info, outfile, indent=4)
             outfile.close()
 
@@ -817,7 +826,7 @@ class LastfmCollector(object):
            :param to: end date
         """
 
-        user_info_file_path = "data/users_info/" + username + "_info.json"
+        user_info_file_path = "data/users_info/" + username + "_info.json.gz"
 
         # ask which albums the user has listened during the crawled week passed by argument to the API
         url = "http://ws.audioscrobbler.com/2.0/?method=user.getweeklyalbumchart&user=%s&api_key=%s&from=%s&to=%s" \
@@ -897,11 +906,14 @@ class LastfmCollector(object):
                         # skip iteration
                         continue
 
-        user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+        with gzip.open(user_info_file_path, 'rt', encoding='utf-8') as infile:
+            user_info = json.load(infile)
+            infile.close()
+
         user_info["crawled"][str(fr)]["listened albums"] = tmp_listened_albums
 
         # write uptaded crawled listened albums
-        with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
+        with gzip.open(user_info_file_path, 'wt', encoding='utf-8') as outfile:
             json.dump(user_info, outfile, indent=4)
             outfile.close()
 
@@ -910,14 +922,17 @@ class LastfmCollector(object):
         Collect details on artists listeded by a given user
         :param username: lastfm username
         """
-        user_info_file_path = "data/users_info/" + username + "_info.json"
+        user_info_file_path = "data/users_info/" + username + "_info.json.gz"
 
         # verify existance of user's file info
         res = self.check_if_file_exist(user_info_file_path)
         if res == -1:
             return
         else:
-            user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+
+            with gzip.open(user_info_file_path, 'rt', encoding='utf-8') as infile:
+                user_info = json.load(infile)
+                infile.close()
 
         # iterate over the crawled weeks
         for key, crawled_week in tqdm.tqdm(user_info["crawled"].items(), ncols=100, ascii=True,
@@ -954,14 +969,16 @@ class LastfmCollector(object):
         Collect details on albums listeded by a given user
         :param username: lastfm username
         """
-        user_info_file_path = "data/users_info/" + username + "_info.json"
+        user_info_file_path = "data/users_info/" + username + "_info.json.gz"
 
         # verify existance of user's file info
         res = self.check_if_file_exist(user_info_file_path)
         if res == -1:
             return
         else:
-            user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+            with gzip.open(user_info_file_path, 'rt', encoding='utf-8') as infile:
+                user_info = json.load(infile)
+                infile.close()
 
         # iterate over the crawled weeks
         for key, crawled_week in tqdm.tqdm(user_info["crawled"].items(), ncols=100, ascii=True,
@@ -1002,7 +1019,7 @@ class LastfmCollector(object):
         :param username: lastfm usename
         """
 
-        user_info_file_path = "data/users_info/" + username + "_info.json"
+        user_info_file_path = "data/users_info/" + username + "_info.json.gz"
 
         tmp_friends = {}
 
@@ -1038,12 +1055,14 @@ class LastfmCollector(object):
                         print("In get_network")
                         continue
 
-        user_info = json.load(open(user_info_file_path, encoding='utf-8'))
+        with gzip.open(user_info_file_path, 'rt', encoding='utf-8') as infile:
+            user_info = json.load(infile)
+            infile.close()
         user_info["friends"] = tmp_friends
 
         try:
             # write user's friends
-            with open(user_info_file_path, 'w', encoding='utf-8') as outfile:
+            with gzip.open(user_info_file_path, 'wt', encoding='utf-8') as outfile:
                 json.dump(user_info, outfile, indent=4)
                 outfile.close()
             return 0
