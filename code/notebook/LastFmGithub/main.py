@@ -2,6 +2,7 @@
 
 import os
 import json
+import gzip
 import time
 from datetime import date
 from LastfmCollector import LastfmCollector
@@ -13,7 +14,8 @@ state_variable = ""  # state variable to memorize deleted user after restart of 
 def check_if_file_is_corrupted(last_user_crawled):
     last_username_file_path = "data/users_info/" + last_user_crawled + "_info.json"
     try:
-        user_info = json.load(open(last_username_file_path, encoding='utf-8'))
+         with gzip.open(last_username_file_path, 'rt', encoding='utf-8') as infile:
+            user_info = json.load(infile)
 
         check1 = user_info["crawled"]
         check2 = user_info["friends"]
@@ -106,7 +108,7 @@ def get_additional_infos(users, lfc):
             # get artists info
             lfc.collect_artist_info_from_weekly_charts(u)
             # get albums info
-            lfc.collect_album_info_from_weekly_charts(u)
+            # lfc.collect_album_info_from_weekly_charts(u)
 
 
 if __name__ == "__main__":
@@ -135,7 +137,7 @@ if __name__ == "__main__":
     # dg.delete_files_directories()
 
     # if needed, delete all content of the "data/users_log.csv"
-    dg.delete_content_of_a_file(users_log_file_path)
+    # dg.delete_content_of_a_file(users_log_file_path)
 
     # ----------------------------------------COLLECT USERNAMES----------------------------------------------------- #
 
