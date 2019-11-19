@@ -1,6 +1,10 @@
 import os
 import zipfile
 
+__author__ = 'Giulio Rossetti', 'Alexandra Bradan'
+__license__ = "GPL"
+__email__ = "giulio.rossetti@gmail.com", "alexandrabradan@gmail.com"
+
 
 def touch(path):
     """
