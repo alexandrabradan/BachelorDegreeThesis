@@ -104,7 +104,8 @@ def user_artist_totalistening_periodlength_builder():
                     with z.open(filename,  'r') as f:
                         # needed to open "week_user_artist_count.gz" (compressed file, inside a zip archieve)
                         gzip_fd = gzip.GzipFile(fileobj=f)
-                        for line in gzip_fd:
+                        for line in tqdm(gzip_fd, ncols=100, ascii=True,
+                                                           desc="username = " + str(current_user)):
                             l = line.decode("utf-8")
 
                             # get data from the line
