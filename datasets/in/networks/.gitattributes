@@ -1,0 +1,4 @@
+node_map1 filter=lfs diff=lfs merge=lfs -text
+network_filtered1.edgelist filter=lfs diff=lfs merge=lfs -text
+network_filtered_int1.edgelist filter=lfs diff=lfs merge=lfs -text
+network_full1.edgelist filter=lfs diff=lfs merge=lfs -text
