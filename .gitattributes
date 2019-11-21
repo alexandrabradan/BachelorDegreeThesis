@@ -1,3 +1,0 @@
-text/plain filter=lfs diff=lfs merge=lfs -text
-plain[[:space:]]text[[:space:]]document filter=lfs diff=lfs merge=lfs -text
-*.txt filter=lfs diff=lfs merge=lfs -text
