@@ -1,4 +1,4 @@
-This directory contains the data used in our data-driven study. The data is divided in the following subdirectories used in different processes of our predictioction analysis. It is omited the users' and artists' data files due to sensible informations that they contain and due to high storage space needed:
+This directory contains the data used in our data-driven study. The data is divided in the following subdirectories used in different processes of our predictioction analysis. The users' and artists' data files are omited due to sensible informations that they contain and due to high storage space needed:
 
 a) **networks**: directory which collects the following files and correlated infos:
    - **node_map1**: file which contains the usernames of our DataSets encoded as integers;
