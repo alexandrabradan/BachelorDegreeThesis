@@ -7,7 +7,7 @@ which allowed me to study the dynamics in the spread of artists belonging to dif
 First of all I had to assign to every interest artist (artist listened by a leader / hit-savvy) a music genre of belonging.
 This was possible thanks to the info returned by the Last.fm API *artist.getTags*, which returned a list of music tags assigned  to the artist. My main work was to clean-up all this tags and among them choose the most representative one. Moreover, the choosen representative tag shall belong to a finite number of main tags, namely:
 
-**['Alternative', 'Blues', 'Classical', 'Country', 'Dance', 'Electronic', 'Hip-Hop/Rap', 'Jazz', 'Latino', 'Pop', 'R&B/Soul', 'Reggae', 'Rock']**
+**['alternative', 'blues', 'classical', 'country', 'dance', 'electronic', 'hip-hop/rap', 'jazz', 'latino', 'pop', 'r&b/soul', 'reggae', 'rock']**
 
 The main tags were retrieve from https://www.musicgenreslist.com/ , a website which tries to be a web-database of all the music genres on the Internet. 
 Since Last.fm API *artist.getTags* returned me a tag list, I had to develop an heuristc in order to choose an artist's most representative tag. This heuristc is very simple:
