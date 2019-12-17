@@ -1,7 +1,10 @@
 This directory contains the following scripts:
-1.
-2.
-3.
+1. TagsCrawler.py : script which retrieves the tags present at https://www.musicgenreslist.com/;
+2. WikipediaTagsCrawler: script which retrieves the tags present at https://en.wikipedia.org/wiki/List_of_music_styles#Avant-garde;
+3. MergeTagsFiles.py: script which merges the tags retrieved from https://www.musicgenreslist.com/ and https://en.wikipedia.org/wiki/List_of_music_styles#Avant-garde, keeping track of the colliding tags in the "data/collided_music_tags_map.json" file;
+4. MergeLauraTags.py: script which checks if the tags present in the "data/merged_music_tags_map.json" file  are the same present in the "data/laura_music_genre_list.json" file (this last file is the one used for the music tag analysis done in the "The Three Dimensions of Social Prominence" paper and so the guideline I followd in the mapping process);
+5. TagsCollector.py: script run multiple times in  order to empty the "data/not_mapped_tags" file (this is done mainly manually) and give them a  mapping.
+
 and following data files, gathered in the "data/" subdirectory:
 a.
 b.
