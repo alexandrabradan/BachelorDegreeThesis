@@ -1,15 +1,19 @@
 This directory contains the following scripts:
+1.
+2.
+3.
+and following data files, gathered in the "data/" subdirectory:
+a.
+b.
+c.
 
-and following files:
-
-
-which allowed me to study the dynamics in the spread of artists belonging to different music genres among our social graph.
-First of all I had to assign to every interest artist (artist listened by a leader / hit-savvy) a music genre of belonging.
-This was possible thanks to the info returned by the Last.fm API *artist.getTags*, which returned a list of music tags assigned  to the artist. My main work was to clean-up all this tags and among them choose the most representative one. Moreover, the choosen representative tag shall belong to a finite number of main tags, namely:
+which allowed me to study the dynamics in the spread of artists belonging to different music genres in our social graph.
+First of all I had to assign to every target artist (artist listened by a leader / hit-savvy) a music genre of belonging.
+This was possible thanks to the info returned by the Last.fm API *artist.getTags*, which returned a list of music tags assigned to the artist. My main work was to clean-up all this tags and among them choose the most representative one. Moreover, the choosen representative tag shall belong to a finite number of main tags, namely:
 
 **['alternative', 'blues', 'classical', 'country', 'dance', 'electronic', 'hip-hop/rap', 'jazz', 'latino', 'pop', 'r&b/soul', 'reggae', 'rock']**
 
-The main tags were retrieve from https://www.musicgenreslist.com/ , a website which tries to be a web-database of all the music genres on the Internet. 
+The main tags were retrieve from https://www.musicgenreslist.com/ , a website which tries to be a web-database of all the music genres on the Internet. Moreover, I merged the retrieved tags with the tags present at https://en.wikipedia.org/wiki/List_of_music_styles#Avant-garde, in order to have a larger tags mapping.
 Since Last.fm API *artist.getTags* returned me a tag list, I had to develop an heuristc in order to choose an artist's most representative tag. This heuristc is very simple:
 * for every artist analyzed, I iterated over the tag list and for every tag I consulted the *music_tags_map.json* file, in order to retrieve (if present) the corresponding mapping of the tag;
 * if the corresponding mapping wasn't found I wrote the tag on the "not_mapped_tags" file and continued the iteration over the list, otherwise I just continued the iteration;
