@@ -1,6 +1,5 @@
 import json
 import os
-import string
 
 import requests
 import urllib.request
@@ -17,6 +16,7 @@ def touch(path):
     with open(path, 'a') as f:
         os.utime(path, None)
         f.close()
+
 
 def check_if_file_exist(path):
     """
@@ -149,6 +149,7 @@ def crawl_tags():
                         tag = tmp_tag[0].strip()  # remove starting and ending whitespaces
 
                     if tag not in not_wanted_main_music_tags:
+                        tag = tag.lower()
                         main_music_tags.append(tag)
 
                         uls = []
@@ -211,6 +212,8 @@ def crawl_tags():
                                                 first_subkey = first_subkey.replace("</em>", "and")
                                                 first_subkey = first_subkey.replace("<src=\"https:", "")
                                                 first_subkey = (first_subkey.replace("<", "")).strip()
+                                                first_subkey = first_subkey.lower()
+
                                                 tags_map[str(first_subkey)] = str(tag)
 
                                                 final_key = tmp_final_key[1]  # second subkey is assigned outside the if block
@@ -224,6 +227,7 @@ def crawl_tags():
                                                 first_subkey = first_subkey.replace("</em>", "and")
                                                 first_subkey = first_subkey.replace("<src=\"https:", "")
                                                 first_subkey = (first_subkey.replace("<", "")).strip()
+                                                first_subkey = first_subkey.lower()
 
                                                 tags_map[str(first_subkey)] = str(tag)
 
@@ -235,6 +239,7 @@ def crawl_tags():
                                     final_key = final_key.replace("</em>", "and")
                                     final_key = final_key.replace("<src=\"https:", "")
                                     final_key = (final_key.replace("<", "")).strip()
+                                    final_key = final_key.lower()
 
                                     if final_key != "ul>" and final_key != "ul>p>script async=\"\" src=\"https:":
                                         # assign clean-up key to the tags map (the value is the corresponding main tag)
