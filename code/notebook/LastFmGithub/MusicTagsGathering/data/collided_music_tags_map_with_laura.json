@@ -1,0 +1,106 @@
+{
+    "disco": [
+        "r&b/soul",
+        "r&b"
+    ],
+    "christian": [
+        "classical",
+        "religious"
+    ],
+    "ccm": [
+        "classical",
+        "religious"
+    ],
+    "qawwali": [
+        "classical",
+        "religious"
+    ],
+    "laptronica": [
+        "electronic",
+        "folk"
+    ],
+    "g-funk": [
+        "hip-hop/rap",
+        "hip-hop"
+    ],
+    "hip pop": [
+        "hip-hop/rap",
+        "hip-hop"
+    ],
+    "hyphy": [
+        "hip-hop/rap",
+        "hip-hop"
+    ],
+    "folk": [
+        "latin",
+        "folk"
+    ],
+    "bachata": [
+        "latino",
+        "latin"
+    ],
+    "bolero": [
+        "latino",
+        "latin"
+    ],
+    "funk": [
+        "r&b/soul",
+        "r&b"
+    ],
+    "anti-folk": [
+        "country",
+        "folk"
+    ],
+    "neofolk": [
+        "country",
+        "folk"
+    ],
+    "dance": [
+        "dance",
+        "electronic"
+    ],
+    "hip hop": [
+        "hip-hop/rap",
+        "hip-hop"
+    ],
+    "r&b": [
+        "r&b/soul",
+        "r&b"
+    ],
+    "punk": [
+        "alternative",
+        "rock"
+    ],
+    "bounce": [
+        "hip-hop/rap",
+        "hip-hop"
+    ],
+    "country-rap": [
+        "hip-hop/rap",
+        "hip-hop"
+    ],
+    "hip-hop": [
+        "hip-hop/rap",
+        "hip-hop"
+    ],
+    "rap": [
+        "hip-hop/rap",
+        "hip-hop"
+    ],
+    "motown": [
+        "r&b/soul",
+        "r&b"
+    ],
+    "neo-soul": [
+        "r&b/soul",
+        "r&b"
+    ],
+    "soul": [
+        "r&b/soul",
+        "r&b"
+    ],
+    "gospel": [
+        "classical",
+        "religious"
+    ]
+}

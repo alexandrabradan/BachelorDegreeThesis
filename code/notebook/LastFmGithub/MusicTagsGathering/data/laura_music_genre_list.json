@@ -1,0 +1,39 @@
+{
+  "rock": ["rock","metal", "gothic", "post punk","psychedelic","spazzcore","rockabilly","death","trock","acid","hardcore",
+        "punk","emocore","emo core","grunge","alternative rock"],
+
+  "blues": ["blues","jazz"],
+
+  "classical": ["classical","avant-garde","ballet","baroque","cantata","chamber","quartet","chant","concerto","early music",
+             "mass requiem", "medieval","opera","oratorio","orchestral","organum","renaissance","romantic",
+             "sonata","symphonic","symphony"],
+
+  "country": ["country","alternative country","american","australian","bakersfield","bluegrass","cowboy",
+           "western","cowpunk","dansband","honky tonk","texas"],
+
+  "electronic": ["electronic’,’2step","8bit","ambient","dub","house","techno","drone","chillwave","bitpop",
+            "nintendocore", "chill out","dubtronic","trip hop","trip-hop","drum & bass","drumfunk","funk",
+            "neurofunk","raggacore","electro","crunk", "electropop", "electro-swing","electroacoustic","dance",
+            "folktronica","glitch","synthcore","dance-punk","dance-rock","electropunk","synthpop","synthpunk",
+            "eurodance","bubblegum","turbofolk","eurobeat","new beat","industrial","trip hop","house","minimal",
+            "rave","speedcore","noise","techno","trance","brostep","chillstep","deep house","glitch","jumpstyle",
+            "terrorcore","electro-industrial", "electroacoustic","folktronica"],
+
+  "jazz": ["jazz","acid jazz","bebop","crossover jazz","smooth"],
+
+  "folk": ["folk","anti-folk","neofolk","techno-folk","laptronica"],
+
+  "r&b": ["r&b","soul","disco","funk","motown","neo-soul"],
+
+  "latin": ["latin","tango","sambass","samba","bachata","bolero","bossa nova","brega","lambada","samba rock",
+        "tropicalia"],
+
+  "hip-hop": ["hip-hop","hip hop","rap","bounce","country-rap","freestyle","g-funk","gangsta","hip pop","hyphy"],
+
+  "pop": ["pop","britpop","bubblegum pop","chamber pop","europop","austropop","dance pop","dream pop","jangle pop",
+       "new romanticism","power pop","psychedelic pop"],
+
+  "religious": ["ccm","christian","christmas","gospel","qawwali","praise","chanukah","easter","thanksgiving"],
+
+  "alternative": ["alternative", "progressive", "steampunk" , "new wave","folk punk","indie"]
+}
