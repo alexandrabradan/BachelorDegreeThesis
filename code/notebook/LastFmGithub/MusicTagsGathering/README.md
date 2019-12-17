@@ -6,17 +6,17 @@ This directory contains the following scripts:
 5. TagsCollector.py: script run multiple times in  order to empty the "data/not_mapped_tags" file and give them a mapping  (this is done mainly manually).
 
 and following data files, gathered in the "data/" subdirectory:
-a. laura_music_genre_list.json: tags mapping used in the "The italian music superdiversity" paper and used as a guideline;
-b. music_tags_map.json: file which contains the tags mapping present at https://www.musicgenreslist.com/;
-c. music_wikipedia_tags_map.json: file which contains the tags mapping present at https://en.wikipedia.org/wiki/List_of_music_styles#Avant-garde;
-d. collided_music_tag_map.json: file which contains the colliding mapping in the "music_tags_map.json" and "music_wikipedia_tags_map.json" files;
-e. MusicalInstruments: a list of musical instruments to add to the "merged_music_tags_map.json" mapped as "classical";
-f. NationAndNationalities: a list of nations and nationalities to add to "not_considered_tags" in order to avoid to map this key;
-g. not_considered_tags: file which contains the tags excluded from the mapping;
-h. not_mapped_tags: file which contains the tags not already mapped;
-i. to_add.json: file which contains the tags to add to the merged_music_tags_map.json fi
-j. collided_music_tag_map_with_laura.json: file which contains the colliding mapping in the "merged_music_tags_map.json" and "laura_music_genre_list.json" files;
-k. merged_music_tags_map.json: final mapping file
+1. laura_music_genre_list.json: tags mapping used in the "The italian music superdiversity" paper and used as a guideline;
+2. music_tags_map.json: file which contains the tags mapping present at https://www.musicgenreslist.com/;
+3. music_wikipedia_tags_map.json: file which contains the tags mapping present at https://en.wikipedia.org/wiki/List_of_music_styles#Avant-garde;
+4. collided_music_tag_map.json: file which contains the colliding mapping in the "music_tags_map.json" and "music_wikipedia_tags_map.json" files;
+5. MusicalInstruments: a list of musical instruments to add to the "merged_music_tags_map.json" mapped as "classical";
+6. NationAndNationalities: a list of nations and nationalities to add to "not_considered_tags" in order to avoid to map this key;
+7. not_considered_tags: file which contains the tags excluded from the mapping;
+8. not_mapped_tags: file which contains the tags not already mapped;
+9. to_add.json: file which contains the tags to add to the merged_music_tags_map.json fi
+10. collided_music_tag_map_with_laura.json: file which contains the colliding mapping in the "merged_music_tags_map.json" and "laura_music_genre_list.json" files;
+11. merged_music_tags_map.json: final mapping file
 
 which allowed me to study the dynamics in the spread of artists belonging to different music genres in our social graph.
 First of all I had to assign to every target artist (artist listened by a leader / hit-savvy) a music genre of belonging.
