@@ -50,8 +50,7 @@ if __name__ == "__main__":
             machine_out_file = open("leaders_DIRECTED", "a")
 
             print("Starting to construct the social graph")
-            LFD = Diffusion("network_filtered_int1.edgelist",  "first_week_user_artist_count.gz",
-                                                                             "user_artist_totalistening_periodlength.gz")
+            LFD = Diffusion("network_filtered_int1.edgelist")
             print("Social graph constructed!")
 
             unique_artists_with_no_leaders = []  # target artists without leaders (no duplicates)
@@ -60,7 +59,7 @@ if __name__ == "__main__":
             for line in actions:
                 tmp_act = line.split("::")
                 act = int(tmp_act[2])
-                asg = LFD.build_action_subgraph(act, delta)  # DIRECTED induced subgraph for the given action
+                asg = LFD.build_action_subgraph(act, delta)  # leader's diffusion tree (DIRECTED induced subgraph of G)
                 leaders = LFD.compute_action_leaders(asg)  # leaders for the given action
 
                 # keep track of target artists without leaders
@@ -70,9 +69,7 @@ if __name__ == "__main__":
                     unique_artists_with_no_leaders.append(act)
 
                 for l in leaders:
-                    # get leader's minimum diffusion tree (from induced DIRECTED subgraph action) =>
-                    # return oriented tree constructed from a depth-first-search from source (restrict "asg" to only
-                    # the user's influenced by the leader, cutting out the others)
+                    # get leader's minimum diffusion tree 
                     l_t = nx.dfs_tree(asg, l)
                     tribe = l_t.nodes()  # users' influenced by the leader
 
@@ -82,20 +79,19 @@ if __name__ == "__main__":
                         if l_t.out_degree(l_n) == 0:  # out-degree = number of edges outgoing from the node "l_n"
                             frontier.append(l_n)
 
-                    # CHARACTERIZE LEADER
-                    # print("Characterize the leader |" + str(l) + "| of the action |" + str(act) + "|")
+                    # CHARACTERIZE THE LEADER
                     width = LFD.compute_width(l_t, l)  # get width ratio between friends in diffusion tree and full graph
 
                     if width == -1:
-                        # I reject the leader found because it's a friend of a seed user for which we didn't collect
-                        # users info (it could have incoming edges that we didn't consider not analyzing its network)
+                        # I reject the leader found because it's a friend of a seed user, for which we didn't collect
+                        # personal info (it could have incoming edges that we didn't consider)
                         print("Leader |" + str(l) + "| rejected for action <<" + str(act) + ">>")
                         continue
 
                     depth = LFD.compute_max_depth(l_t, l, frontier)  # get leeader's diffusion depth
                     mean_depth = float(depth) / len(frontier)  # get mean depth
                     l_strength = LFD.compute_level_strength(l_t, l, distance_factor, act)  # get leader's strenght
-                    print("NEW leader |" + str(l) + "| for action <<" + str(act) + ">>")
+                    print("NEW leader |" + str(l) + "| for action |" + str(act) + "|")
 
                     machine_out_file.write(
                         "%d::%d::%d::%1.9f::%1.9f::%1.9f::%1.9f\n" \
