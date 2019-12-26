@@ -174,7 +174,7 @@ def week_user_artist_count_builder():
                         # check is user is encoded
                         username_encoding = check_if_user_is_encoded(username)
 
-                        if username == -1:  # username not encoded
+                        if username_encoding == -1:  # username not encoded
                             continue  # iterate over the next user
 
                         # username is encoded (is part of our study and we have his/her friends data)
