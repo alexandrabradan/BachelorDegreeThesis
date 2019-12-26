@@ -1,6 +1,7 @@
 import math
 import os
 import re
+import sys
 import zipfile
 import gzip
 import string
@@ -68,7 +69,7 @@ def get_week_from_encoding(week_encoding):
                             week = week.strip('\n')
                             f.close()
                             z.close()
-                            return week
+                            return int(week)
 
     # the week_encoding is not present in the  "weeks_map1" file
     return -1
@@ -129,9 +130,9 @@ def user_artist_totalistening_periodlength_builder():
                                 data = l.split("::")
 
                                 # remove all white spaces and newlines
-                                week_encoding = data[0].translate({ord(c): None for c in string.whitespace})
-                                user_encoding = data[1].translate({ord(c): None for c in string.whitespace})
-                                artist_encoding = data[2].translate({ord(c): None for c in string.whitespace})
+                                week_encoding = data[0]
+                                user_encoding = data[1]
+                                artist_encoding = data[2]
                                 playcount = data[3].translate({ord(c): None for c in string.whitespace})
 
                                 if current_user != user_encoding and current_user != "":
@@ -164,7 +165,7 @@ def user_artist_totalistening_periodlength_builder():
 
                                         except Exception as e:  # it should not happen
                                             print(e)
-                                            print()
+                                            sys.exit(-999)
 
                                     # update current user to analyze
                                     current_user = user_encoding
@@ -245,7 +246,7 @@ def user_artist_totalistening_periodlength_builder():
 
                                 except Exception as e:  # it should not happen
                                     print(e)
-                                    print()
+                                    sys.exit(-999)
 
 
 def add_file_to_zip_directory(filepath, zip_archive):
