@@ -14,14 +14,12 @@ class Diffusion(object):
         3) Strenght: intensity of the action performed by some nodes after the leader
     """
 
-    def __init__(self, graph_file, action_file, listening_file):
+    def __init__(self, graph_file):
         """
         constructor
         :param graph_file: edgelist format (network_filtered_int1.edgelist)
-        :param action_file: actions in gurumine format (week_user_artistcount_count)
-        :param listening_file: listenings in gurumine format (user_artist_totalistening_periodlength)
         """
-        self.__load_data(graph_file, action_file, listening_file)  # construct SOCIAL GRAPH
+        self.__load_data(graph_file)  # construct SOCIAL GRAPH
         self.node2weight = {}  # temporary dicts which contains the weights fort a given action
 
     def get_listeners_for_artist(self, artist_encoding):
@@ -94,21 +92,17 @@ class Diffusion(object):
 
         return total_playcounts
 
-    def __load_data(self, graph_file, action_file, listening_file):
+    def __load_data(self, graph_file):
         """
         Load the social graph graph
 
         :param graph_file: edgelist format [username \t friend]
-        :param action_file: actions format [week :: username :: artist :: week_playcount]
-        :param listening_file: listenings format [username :: artist :: total_playcounts :: listening_period]
         """
 
         # it's a DIRECTED graph because Last.fm has introduced the distinction between following and followers
         # (I've collected for eah user his followings, so the directed graph rapresents the following graph of the
-        # data I have extracted)
+        # users I have scrapped)
         self.G = nx.DiGraph()
-
-        # self.G = nx.Graph()
 
         with zipfile.ZipFile('networks.zip') as z:
             for filename in z.namelist():
@@ -126,7 +120,7 @@ class Diffusion(object):
                     edges.close()
 
         self.G.remove_edges_from(self.G.selfloop_edges())  # remove self-loops
-        self.G.remove_nodes_from(list(nx.isolates(self.G)))
+        self.G.remove_nodes_from(list(nx.isolates(self.G)))  # remove isolated nodes
 
     def build_action_subgraph(self, action, delta):
         """
@@ -151,21 +145,15 @@ class Diffusion(object):
             seed_user = str(e[0])
             friend = str(e[1])
 
-            # difference between artist's first week of listening (encoded) made by the user and his friend
+            # difference between artist's first week of listening (encoded) made by the user and the user he follows
             diff = abs((int(nodes2time.get(seed_user)) - int(nodes2time.get(friend))))
 
             # among the 2 users, one of them has listened to the artist first (<= the influencial keep alive time)
             if diff != 0 and diff <= delta:
-                # if the user that e[0] follows has listen first to the artist, I add the edge, REVERSED,
-                # in order to take trace of the diffusion path
+                # if the user that e[0] follows (e[1]) has listened to the artist first,
+                #  I add the edge, REVERSED, in order to take trace of the diffusion path
                 if int(nodes2time.get(friend)) < int(nodes2time.get(seed_user)):
                     disg.add_edge(int(friend), int(seed_user))
-                """
-                if int(nodes2time.get(seed_user)) < int(nodes2time.get(friend)):  # e[0]'s first listen < e[1]'s first listen
-                    disg.add_edge(int(seed_user), int(friend))  # e[0] influenced e[1]
-                else:  # e[1]'s first listen < e[0]'s first listen
-                    disg.add_edge(int(friend), int(seed_user))  # e[1] influenced  e[0]
-                """
 
         disg.remove_edges_from(disg.selfloop_edges())  # remove self-loops
         disg.remove_nodes_from(list(nx.isolates(disg)))  # remove isolated nodes
@@ -204,8 +192,8 @@ class Diffusion(object):
         max_depth = 0  # root's depth
 
         for f in frontier:
-            # get shortest path between leader(root) and frontier node l
-            l = len(nx.shortest_path(tree, leader, f))  # count # of hops
+            # get shortest path between leader(root) and frontier node f
+            l = len(nx.shortest_path(tree, leader, f))  # count num. of nodes (including root)
             if l > max_depth:
                 max_depth = l
 
@@ -221,15 +209,16 @@ class Diffusion(object):
         leader_neighbors = list(self.G.neighbors(leader))  # get leaders neighbors in the full graph
         tribe_restricted_neighbors = list(tree.neighbors(leader))  # leaders neighbors in the diffusion tree
 
-        # the leader is a friend of a seed user, for which we didn't collect network info =>
+        # if the leader is a friend of a seed user, for which we didn't collect network info =>
         # we reject him as a leader because he could have incoming-edges that we didn't consider
         if len(leader_neighbors) == 0:
             return -1
 
         ratio = float(len(tribe_restricted_neighbors)) / float(len(leader_neighbors))
 
-        return ratio  # return leader's width ration between and its neighbors in the diffusion tree
-                      # its neighbors in the full graph
+        # return leader's width ration between its neighbors in the diffusion tree
+        # and its neighbors in the full graph
+        return ratio 
 
     def compute_strength(self, tree, leader, distance_factor, action):
         """
@@ -278,17 +267,17 @@ class Diffusion(object):
 
                 # try to get user's artist playcount in the first week
                 try:
-                    w = self.node2weight[str(n)]  # num. artist's playcount in first week
+                    w = self.node2weight[str(n)]  # n's artist playcount in first week 
 
                     total_listens = float(
-                        self.get_total_listenings_for_artist(n, action))  # num. tot. artist's playcount
+                        self.get_total_listenings_for_artist(n, action))  # n's tot. artist playcount
 
-                    if total_listens == -1:
+                    if total_listens == -1:  # n's artist total playcount is missing
                         w = 0.0
                         total_listens = 0.0
 
                 except KeyError:  # the user didn't listen to the artist (it should not happen)
-                    w = 0
+                    w = 0.0
                     total_listens = 0.0
 
                 if not l in level_to_weight:
