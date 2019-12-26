@@ -67,9 +67,9 @@ def gather_unseen_artists():
                     artist_encoding = line_array[2]
                     playcount = line_array[3].strip()  # remove "\n"
 
-                    # I have to check if the current listening week is >= 14/06/18 12:00 PM
+                    # I have to check if the current listening week is >= 14/01/18 12:00 PM
                     # (and eventually update the absolute first artist listening made by some user).
-                    # If I found out that the current listening week is <  14/06/18 12:00 PM
+                    # If I found out that the current listening week is <  14/01/18 12:00 PM
                     # I have to delete the artist from the dict (some user has listened to him before our observation
                     # time window)
                     if int(week_encoding) < 26:
