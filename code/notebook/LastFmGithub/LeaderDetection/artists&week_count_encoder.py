@@ -62,9 +62,8 @@ def check_if_user_is_encoded(username):
 
                         if match is not None:
                             # retrive user's encoding
-                            username_encoding = line.lstrip(b).decode("utf-8")  # convert bytes to string
-                            username_encoding = username_encoding.strip('\t')
-                            username_encoding = username_encoding.strip('\n')
+                            line_array = line.decode("utf-8").split("\t")  # convert bytes to string
+                            user_encoding = line_array[1].strip().replace("\n", "")
                             f.close()
                             z.close()
                             return username_encoding
