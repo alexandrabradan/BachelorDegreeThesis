@@ -1,0 +1,23 @@
+{
+
+    "laptronica": [
+        "electronic",
+        "folk"
+    ],
+    "folk": [
+        "country",
+        "folk"
+    ],
+    "anti-folk": [
+        "country",
+        "folk"
+    ],
+    "neofolk": [
+        "country",
+        "folk"
+    ],
+    "dance": [
+        "dance",
+        "electronic"
+    ]
+}
