@@ -674,7 +674,7 @@ if __name__ == "__main__":
 
     adoption_log_file = "adoption_log.csv"
     main_db_name = "lastfm.db"
-    ground_truth_file = "/home/alexandra/Desktop/global_AT_ground_truth_file5"
+    ground_truth_file = "data/global_AT_ground_truth_file5"
 
     # Load Adoption log Data
     print( "Loading data")
@@ -700,8 +700,8 @@ if __name__ == "__main__":
     compute_GLOBAL_adoption_trand()
     new_ground_truth_file()
 
-    ddata, AT_goods_map = collect_AT("global_cotinous_at.json")
-    cluster_adoption_trends(ddata, AT_goods_map, 2, "global_clustering_res.json", "Weeks", False)
-    cluster_adoption_trends(ddata, AT_goods_map, 3, "global_clustering_res3.json", "Weeks", False)
-    cluster_adoption_trends(ddata, AT_goods_map, 4, "global_clustering_res4.json", "Weeks", False)
-    evaluate_clustering_results("global_not_continous_at.json", "global_clustering_res.json", "global_AT_ground_truth_file5")
+    ddata, AT_goods_map = collect_AT("data/global_cotinous_at.json")
+    cluster_adoption_trends(ddata, AT_goods_map, 2, "data/global_clustering_res.json", "Weeks", False)
+    cluster_adoption_trends(ddata, AT_goods_map, 3, "data/global_clustering_res3.json", "Weeks", False)
+    cluster_adoption_trends(ddata, AT_goods_map, 4, "data/global_clustering_res4.json", "Weeks", False)
+    evaluate_clustering_results("data/global_not_continous_at.json", "data/global_clustering_res.json", "data/global_AT_ground_truth_file5")

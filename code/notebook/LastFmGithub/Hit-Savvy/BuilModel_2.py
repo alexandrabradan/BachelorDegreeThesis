@@ -840,19 +840,19 @@ if __name__ == "__main__":
                                                  training_set_start_edge, training_set_end_edge)
         compute_adoption_trand_for_test_sets(i_incr, test_set_end_edge - test_set_start_edge, test_set_start_edge,
                                                                                             test_set_end_edge)
-        TRS_continous_file = "continous_at_in_TRS" + str(i_incr) + ".json"
-        TRS_not_continous_file = "not_continous_at_in_TRS" + str(i_incr) + ".json"
-        TRS_clustering_res_file = "TRS" + str(i_incr) + "_clustering_res.json"
-        TRS_ground_truth_file = "TRS" + str(i_incr) + "_at_ground_truth_file5"
+        TRS_continous_file = "data/continous_at_in_TRS" + str(i_incr) + ".json"
+        TRS_not_continous_file = "data/not_continous_at_in_TRS" + str(i_incr) + ".json"
+        TRS_clustering_res_file = "data/TRS" + str(i_incr) + "_clustering_res.json"
+        TRS_ground_truth_file = "data/TRS" + str(i_incr) + "_at_ground_truth_file5"
         x_label = "Training set" + str(i_incr) +  "'s weeks"
         ddata, AT_goods_map = collect_AT(TRS_continous_file)
         cluster_adoption_trends(ddata, AT_goods_map, 2, TRS_clustering_res_file, x_label, False)
         evaluate_clustering_results(TRS_not_continous_file, TRS_clustering_res_file, TRS_ground_truth_file)
 
-        ts_continous_file = "continous_at_in_ts" + str(i_incr) + ".json"
-        ts_not_continous_file = "not_continous_at_in_ts" + str(i_incr) + ".json"
-        ts_clustering_res_file = "ts" + str(i_incr) + "_clustering_res.json"
-        ts_ground_truth_file = "ts" + str(i_incr) + "_at_ground_truth_file5"
+        ts_continous_file = "data/continous_at_in_ts" + str(i_incr) + ".json"
+        ts_not_continous_file = "data/not_continous_at_in_ts" + str(i_incr) + ".json"
+        ts_clustering_res_file = "data/ts" + str(i_incr) + "_clustering_res.json"
+        ts_ground_truth_file = "data/ts" + str(i_incr) + "_at_ground_truth_file5"
         x_label = "Test set" + str(i_incr) + "'s weeks"
         ddata, AT_goods_map = collect_AT(ts_continous_file)
         cluster_adoption_trends(ddata, AT_goods_map, 2, ts_clustering_res_file, x_label, False)
