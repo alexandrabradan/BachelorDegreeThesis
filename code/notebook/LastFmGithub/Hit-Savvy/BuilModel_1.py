@@ -692,7 +692,7 @@ if __name__ == "__main__":
         test_set_end_edge = int(test_set_edges[i][1])
 
         i_incr = i + 6
-        training_set_db_name = "lastfm_pp" + str(i_incr) + ".db"
+        training_set_db_name = "prova_" + str(i_incr) + ".db"
 
         # load current training set and test set db
         load_splitted_db_data(main_db_name, training_set_db_name, test_set_start_edge, test_set_end_edge)
