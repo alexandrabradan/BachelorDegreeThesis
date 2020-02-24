@@ -1234,7 +1234,7 @@ if __name__ == "__main__":
         test_set_end_edge = int(test_set_edges[i][1])
 
         i_incr = i + 1
-        database_name = "lastfm_pp" + str(i_incr) + ".db"
+        database_name = "prova_" + str(i_incr) + ".db"
 
         ground_truth_file = "data/global_AT_ground_truth_file5"
 
