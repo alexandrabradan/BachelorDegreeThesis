@@ -407,7 +407,7 @@ class EarlyAdoptersThreshold(object):
                         indice_max = self.__identify_max(adoption_trend, slot + 1)
                     else:
                         indice_max = len(adoption_trend) - 1
-                    if slot != 1:
+                    if slot != 0:
                         tmp_distance = self.__compute_distance(slot - 1, float(adoption_trend[slot - 1]), indice_max,
                                                                float(adoption_trend[indice_max]), slot,
                                                                float(adoption_trend[slot]))
