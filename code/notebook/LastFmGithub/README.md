@@ -4,5 +4,3 @@ Here you can find my work done during my internship at University of Pisa. The a
 
 - https://github.com/GiulioRossetti/leader_detect
 - https://github.com/GiulioRossetti/hit-savvy
-
-I'm apologizing but my data and results are still fragmented. I'll upload them all when I'll have a bit of free time :)
