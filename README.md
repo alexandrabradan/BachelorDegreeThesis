@@ -12,7 +12,7 @@ The code as well as the results and the final report that I've produced, can be 
 2. **/Hit_Savvy/**: contains the scripts, the data and the results of the predictive model and the personal listenings data model;
 3. **/Thesis/**: contains my report, in which I explain every undergone step and result.
 
-The leader detection algorithm, the predictive model, the personal listening data model and the communities detection library used in my work and modified to fit a direct, sparse graphh are tuned-up by the Knowledge Discovery Data Mining Laboratory(KDD Lab), the joint research initiative of ISTI Insitute of CNR and the Departement of Computer Science of the University of Pisa. Their original code can be found here:
+The leader detection algorithm, the predictive model, the personal listening data model and the communities detection library used in my work and modified to fit a direct, sparse graph, are tuned-up by the Knowledge Discovery Data Mining Laboratory(KDD Lab), the joint research initiative of ISTI Insitute of CNR and the Departement of Computer Science of the University of Pisa. Their original code can be found here:
 
 - https://github.com/GiulioRossetti/leader_detect
 - https://github.com/GiulioRossetti/hit-savvy
