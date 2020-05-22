@@ -7,8 +7,8 @@ Here you can find the work that I've done during my internship at University of 
 
 My study shows how in a sparse network (low friendship density and fragmentary adoption log) influential and predictive nodes are uncorrelated (if a node is able to influence his peer neighbors, most of the time he is not useful to spot success. The same is true for nodes used as indicators to measure unseen artists' future success, which in most cases don't espress influential power). My work focuses in detecting these key nodes, discussing the predictive results (new artists' success predictions) and undergoing some adjustments to better tune the scores. Lastly, my study confirms nodes' preferntial attachment using a Personal Listening Data Model, used to classify and cluster the nodes and better explain my analyzed newtork's sparsity.
 
-The code as well as the results and the final report that I've produced, can be found in the directory **./code/notebook/LastfmGithub/**. The directory is organized in the following sub-directories:
-1. **/Leader_detection/**: contains the scripts, the data and the results of the leader detection;
+The code as well as the results and the final report that I've produced, can be found in the directory **./code/notebook/LastFmGithub/**. The directory is organized in the following sub-directories:
+1. **/LeaderDetection/**: contains the scripts, the data and the results of the leader detection;
 2. **/Hit_Savvy/**: contains the scripts, the data and the results of the predictive model and the personal listenings data model;
 3. **/Thesis/**: contains my report, in which I explain every undergone step and result.
 
