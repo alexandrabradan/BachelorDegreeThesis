@@ -1,0 +1,15 @@
+{
+    "precision": 0.670732,
+    "recall (with unclassified)": 0.008241,
+    "recall (without unclassified)": 0.982143,
+    "accuracy": 0.013361,
+    "specificity (with unclassified)": 0.564516,
+    "NPV": 0.972222,
+    "F1": 0.797101,
+    "TP": 55.0,
+    "FP": 27.0,
+    "TN": 35.0,
+    "FN": 1.0,
+    "unclassified": 6618.0,
+    "total": 6736.0
+}
