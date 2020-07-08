@@ -11,7 +11,7 @@ The code as well as the results and the final report that I've produced, can be 
 1. **/LeaderDetection/**: contains the scripts, the data and the results of the leader detection;
 2. **/Hit_Savvy/**: contains the scripts, the data and the results of the predictive model and the personal listenings data model;
 
-The directory **./data/** contains the data scapped or collect thanks to APIs of Last.fm.
+The directory **./data/** contains the data scapped or collect thanks to  Last.fm's APIs.
 
 The directory **./thesis/** contains my report, in which I explain every undergone step and result and a file describing its data collection process.
 
