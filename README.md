@@ -1,7 +1,7 @@
 
 # Lastfm Leader detection and Hit-Savvy prediction
 
-Here you can find the work that I've done during my internship at University of Pisa. The aim of the internship was to use a leader detection algorithm combined with a predictive model, to validate the following question:
+Here you can find the work that I've done during my <b>internship at University of Pisa for conqueing my Bachelor Degree in Computer Science</b>. The aim of the internship was to use a leader detection algorithm combined with a predictive model, to validate the following question:
 
 *"Can we exploit influential nodes to predicte the success of new, succesfull artists in a musical network ?"*
 
